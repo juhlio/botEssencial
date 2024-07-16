@@ -1,0 +1,42 @@
+2024/07/16-10:06:30.343 3e7c Reusing MANIFEST C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/07/16-10:06:30.344 3e7c Recovering log #2201
+2024/07/16-10:06:30.499 3e7c Reusing old log C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/002201.log 
+2024/07/16-10:06:35.337 442c Manual compaction at level-0 from ' \xf8\x01\x00\x00\x00' @ 72057594037927935 : 1 .. ' \xf9\x01\x00\x00\x00' @ 0 : 0; will stop at (end)
+2024/07/16-10:06:46.028 1dc8 Level-0 table #2211: started
+2024/07/16-10:06:46.089 1dc8 Level-0 table #2211: 1130243 bytes OK
+2024/07/16-10:06:46.092 1dc8 Delete type=0 #2201
+2024/07/16-10:06:46.141 442c Compacting 1@1 + 6@2 files
+2024/07/16-10:06:46.423 442c Generated table #2212@1: 83945 keys, 2232901 bytes
+2024/07/16-10:06:46.769 442c Generated table #2213@1: 96607 keys, 2247647 bytes
+2024/07/16-10:06:47.105 442c Generated table #2214@1: 99214 keys, 2263284 bytes
+2024/07/16-10:06:47.239 442c Generated table #2215@1: 17413 keys, 2211676 bytes
+2024/07/16-10:06:47.494 442c Generated table #2216@1: 63352 keys, 2226055 bytes
+2024/07/16-10:06:47.548 442c Generated table #2217@1: 19216 keys, 370105 bytes
+2024/07/16-10:06:47.548 442c Compacted 1@1 + 6@2 files => 11551668 bytes
+2024/07/16-10:06:47.549 442c compacted to: files[ 0 0 6 0 0 0 0 ]
+2024/07/16-10:06:47.550 442c Delete type=2 #2203
+2024/07/16-10:06:47.550 442c Delete type=2 #2204
+2024/07/16-10:06:47.550 442c Delete type=2 #2205
+2024/07/16-10:06:47.550 442c Delete type=2 #2206
+2024/07/16-10:06:47.550 442c Delete type=2 #2207
+2024/07/16-10:06:47.550 442c Delete type=2 #2208
+2024/07/16-10:06:47.550 442c Delete type=2 #2211
+2024/07/16-10:19:22.230 1cac Level-0 table #2219: started
+2024/07/16-10:19:22.290 1cac Level-0 table #2219: 1190292 bytes OK
+2024/07/16-10:19:22.291 1cac Delete type=0 #2210
+2024/07/16-10:21:58.301 1cac Compacting 1@1 + 6@2 files
+2024/07/16-10:21:58.513 1cac Generated table #2220@1: 85010 keys, 2234687 bytes
+2024/07/16-10:21:58.660 1cac Generated table #2221@1: 97016 keys, 2248920 bytes
+2024/07/16-10:21:58.791 1cac Generated table #2222@1: 95533 keys, 2276827 bytes
+2024/07/16-10:21:58.883 1cac Generated table #2223@1: 18390 keys, 2200145 bytes
+2024/07/16-10:21:59.054 1cac Generated table #2224@1: 62682 keys, 2224321 bytes
+2024/07/16-10:21:59.091 1cac Generated table #2225@1: 15858 keys, 303695 bytes
+2024/07/16-10:21:59.092 1cac Compacted 1@1 + 6@2 files => 11488595 bytes
+2024/07/16-10:21:59.094 1cac compacted to: files[ 0 0 6 0 0 0 0 ]
+2024/07/16-10:21:59.094 1cac Delete type=2 #2212
+2024/07/16-10:21:59.094 1cac Delete type=2 #2213
+2024/07/16-10:21:59.094 1cac Delete type=2 #2214
+2024/07/16-10:21:59.094 1cac Delete type=2 #2215
+2024/07/16-10:21:59.094 1cac Delete type=2 #2216
+2024/07/16-10:21:59.094 1cac Delete type=2 #2217
+2024/07/16-10:21:59.095 1cac Delete type=2 #2219
