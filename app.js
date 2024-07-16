@@ -51,7 +51,8 @@ async function menuPrincipal() {
   // EVENTO DE ESCUTA/ENVIO DE MENSAGENS RECEBIDAS PELA API
   client.on("message", async (msg) => {
     const user = msg.from;
-    const state = getUserState(user);
+    let state = getUserState(user);
+    let estadoConversa = getUserState(user);
 
     if (!state || state.type == 'menuPrincipal' ) {
       if (msg.body.toLowerCase() === "começar") {
@@ -60,11 +61,7 @@ async function menuPrincipal() {
         );
         //setUserState(user, { type: 'menu_principal' });
       } else if (msg.body === "1") {
-        /* client.sendMessage(
-          user,
-          "Você escolheu Orçamentos. Redirecionando para o fluxo:"
-        ); */
-        setUserState(user, { type: "orcamento", step: "0", data: {} });
+        setUserState(user, {user: user, type: "orcamento", step: "0", data: {} });
         estadoConversa = getUserState(user);
         //console.log(estadoConversa);
         await orcamentos.inicioMenuOrcamentos(client, msg, estadoConversa, user);
@@ -81,7 +78,6 @@ async function menuPrincipal() {
         );
       }
     } else if (state.type == 'orcamento') {
-      console.log('Voltou pro menu principal');
       await orcamentos.inicioMenuOrcamentos(client, msg, estadoConversa, user);
       
     } else if (state.type == 'orcamentoTanque'){

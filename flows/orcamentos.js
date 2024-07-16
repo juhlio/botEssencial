@@ -1,8 +1,9 @@
-const { setUserState, getUserState } = require('../stateManager');
+const { setUserState, getUserState, deleteUserState, updateUserData, addDataToObject } = require('../stateManager');
 const menuPrincipal = require('../app')
 
 // Função para processar a conversa
 async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
+    console.log(`Inicio menu orçamentos`)
     console.log(estadoConversa);
 
     if (msg.body.toLowerCase() === 'inicio') {
@@ -18,7 +19,7 @@ async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
 
     switch (estadoConversa.step) {
         case '0':
-            estadoConversa.step = '1';
+            updateUserData(user, {step: '1'})
             await client.sendMessage(
                 user,
                 'Você escolheu orçamentos. Digite o tipo do orçamento desejado: \n\n 1 - Tanques \n 2 - Outros\n\n Ou digite "Inicio" para acessar o menu principal'
@@ -27,8 +28,11 @@ async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
 
         case '1':
             if (msg.body === '1') {
-                estadoConversa.data.tipoOrcamento = 'Tanque';
-                estadoConversa.type = 'orcamentoTanque'
+            
+                updateUserData(user, {type: "orcamentoTanque", step: "0"});
+                addDataToObject(user, {tipoOrcamento: 'Tanque'})
+                /* estadoConversa.data.tipoOrcamento = 'Tanque';
+                estadoConversa.type = 'orcamentoTanque' */
                 estadoConversa.step = '0'
                 await client.sendMessage(user, 'Você será redirecionado para iniciar o orçamento de tanque. Confirma?')
                 break
@@ -63,6 +67,7 @@ async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
             break;
     }
 
+    console.log(`Estado Conversa no arquivo orcamentos.js`);
     console.log(estadoConversa);
 }
 
