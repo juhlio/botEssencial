@@ -1,57 +1,7 @@
-2024/07/16-17:13:38.452 3710 Reusing MANIFEST C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2024/07/16-17:13:38.454 3710 Recovering log #3037
-2024/07/16-17:13:38.455 3710 Reusing old log C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/003037.log 
-2024/07/16-17:13:38.455 3710 Delete type=2 #3035
-2024/07/16-17:13:38.455 3710 Delete type=2 #3036
-2024/07/16-17:13:38.455 3710 Delete type=2 #3039
-2024/07/16-17:13:38.455 3710 Delete type=2 #3040
-2024/07/16-17:13:38.471 1f50 Level-0 table #3041: started
-2024/07/16-17:13:38.471 1f50 Level-0 table #3041: 0 bytes OK
-2024/07/16-17:13:38.474 1f50 Delete type=0 #3037
-2024/07/16-17:13:38.476 1f50 Manual compaction at level-0 from ' r\x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' s\x02\x00\x00\x00' @ 0 : 0; will stop at ' r\x02\x00\x00\x05' @ 3602775 : 1
-2024/07/16-17:13:38.476 1f50 Compacting 1@0 + 1@1 files
-2024/07/16-17:13:38.507 1f50 Generated table #3042@0: 4857 keys, 113515 bytes
-2024/07/16-17:13:38.507 1f50 Compacted 1@0 + 1@1 files => 113515 bytes
-2024/07/16-17:13:38.509 1f50 compacted to: files[ 0 1 7 0 0 0 0 ]
-2024/07/16-17:13:38.509 1f50 Manual compaction at level-0 from ' r\x02\x00\x00\x05' @ 3602775 : 1 .. ' s\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
-2024/07/16-17:13:39.876 29cc Compacting 1@1 + 7@2 files
-2024/07/16-17:13:40.066 29cc Generated table #3043@1: 85333 keys, 2235103 bytes
-2024/07/16-17:13:40.241 29cc Generated table #3044@1: 95118 keys, 2246108 bytes
-2024/07/16-17:13:40.421 29cc Generated table #3045@1: 101364 keys, 2253558 bytes
-2024/07/16-17:13:40.562 29cc Generated table #3046@1: 66092 keys, 2286045 bytes
-2024/07/16-17:13:40.618 29cc Level-0 table #3049: started
-2024/07/16-17:13:40.624 29cc Level-0 table #3049: 11775 bytes OK
-2024/07/16-17:13:40.628 29cc Delete type=2 #3033
-2024/07/16-17:13:40.628 29cc Delete type=2 #3038
-2024/07/16-17:13:40.628 29cc Delete type=0 #3040
-2024/07/16-17:13:40.748 29cc Generated table #3047@1: 18124 keys, 2183310 bytes
-2024/07/16-17:13:41.025 29cc Generated table #3050@1: 77177 keys, 2203839 bytes
-2024/07/16-17:13:41.025 29cc Compacted 1@1 + 7@2 files => 13407963 bytes
-2024/07/16-17:13:41.028 29cc compacted to: files[ 1 0 6 0 0 0 0 ]
-2024/07/16-17:13:41.028 3f34 Manual compaction at level-0 from ' s\x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' t\x02\x00\x00\x00' @ 0 : 0; will stop at ' s\x02\x00\x00\x05' @ 3603258 : 1
-2024/07/16-17:13:41.028 3f34 Compacting 1@0 + 0@1 files
-2024/07/16-17:13:41.032 3f34 Generated table #3051@0: 280 keys, 6012 bytes
-2024/07/16-17:13:41.032 3f34 Compacted 1@0 + 0@1 files => 6012 bytes
-2024/07/16-17:13:41.033 3f34 compacted to: files[ 0 1 6 0 0 0 0 ]
-2024/07/16-17:13:41.033 3f34 Delete type=2 #3049
-2024/07/16-17:13:41.034 3f34 Manual compaction at level-0 from ' s\x02\x00\x00\x05' @ 3603258 : 1 .. ' t\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
-2024/07/16-17:13:43.964 418c Compacting 1@1 + 4@2 files
-2024/07/16-17:13:44.214 418c Generated table #3052@1: 85333 keys, 2235107 bytes
-2024/07/16-17:13:44.593 418c Generated table #3053@1: 95114 keys, 2245956 bytes
-2024/07/16-17:13:44.969 418c Generated table #3054@1: 101364 keys, 2253912 bytes
-2024/07/16-17:13:45.210 418c Generated table #3055@1: 66152 keys, 2286962 bytes
-2024/07/16-17:13:45.210 418c Compacted 1@1 + 4@2 files => 9021937 bytes
-2024/07/16-17:13:45.212 418c compacted to: files[ 0 0 6 0 0 0 0 ]
-2024/07/16-17:13:45.212 418c Delete type=2 #3021
-2024/07/16-17:13:45.213 418c Delete type=2 #3022
-2024/07/16-17:13:45.213 418c Delete type=2 #3026
-2024/07/16-17:13:45.213 418c Delete type=2 #3027
-2024/07/16-17:13:45.213 418c Delete type=2 #3028
-2024/07/16-17:13:45.213 418c Delete type=2 #3029
-2024/07/16-17:13:45.213 418c Delete type=2 #3030
-2024/07/16-17:13:45.213 418c Delete type=2 #3042
-2024/07/16-17:13:45.213 418c Delete type=2 #3043
-2024/07/16-17:13:45.213 418c Delete type=2 #3044
-2024/07/16-17:13:45.213 418c Delete type=2 #3045
-2024/07/16-17:13:45.213 418c Delete type=2 #3046
-2024/07/16-17:13:45.213 418c Delete type=2 #3051
+2024/07/17-09:55:58.342 13dc Reusing MANIFEST C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2024/07/17-09:55:58.380 13dc Recovering log #3095
+2024/07/17-09:55:58.434 13dc Reusing old log C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/003095.log 
+2024/07/17-09:56:00.489 2dcc Level-0 table #3106: started
+2024/07/17-09:56:00.506 2dcc Level-0 table #3106: 156355 bytes OK
+2024/07/17-09:56:00.509 2dcc Delete type=0 #3095
+2024/07/17-09:56:00.511 2dcc Manual compaction at level-0 from ' w\x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' x\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
