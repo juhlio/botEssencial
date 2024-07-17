@@ -257,7 +257,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
               Comprimento - *${estadoConversa.data.comprimentoLocal}m*
 
               Sobre a tubulaçao: *${estadoConversa.data.tubulacao}*
-              Sobre as conexões: *${estadoConversa.data.conexao}*\n
+              Sobre as conexões: *${msg.body}*\n
             
               Para confirmar as informações e enviar digite *"1"*
               `

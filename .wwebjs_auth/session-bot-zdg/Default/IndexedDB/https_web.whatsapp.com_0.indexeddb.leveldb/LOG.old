@@ -1,7 +1,0 @@
-2024/07/17-09:55:58.342 13dc Reusing MANIFEST C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2024/07/17-09:55:58.380 13dc Recovering log #3095
-2024/07/17-09:55:58.434 13dc Reusing old log C:\Users\Julio\Documents\Github\botEssencial\.wwebjs_auth\session-bot-zdg\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/003095.log 
-2024/07/17-09:56:00.489 2dcc Level-0 table #3106: started
-2024/07/17-09:56:00.506 2dcc Level-0 table #3106: 156355 bytes OK
-2024/07/17-09:56:00.509 2dcc Delete type=0 #3095
-2024/07/17-09:56:00.511 2dcc Manual compaction at level-0 from ' w\x02\x00\x00\x00' @ 72057594037927935 : 1 .. ' x\x02\x00\x00\x00' @ 0 : 0; will stop at (end)

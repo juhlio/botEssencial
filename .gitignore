@@ -133,5 +133,5 @@ dist
 userStates
 
 #pastas de cache
-.wwebjs_auth
-.wwebjs_cache
+.wwebjs_auth/
+.wwebjs_cache/

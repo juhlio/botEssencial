@@ -8,7 +8,6 @@ const categories = database.define('budget_requests', {
         allowNull: false,
         primaryKey: true
     },
-    orcId: Sequelize.INTEGER,
     clientId: Sequelize.INTEGER,
     equipId: Sequelize.INTEGER,
     typeId: Sequelize.INTEGER,
