@@ -2,7 +2,8 @@ const {
   setUserState,
   getUserState,
   updateUserData,
-  addDataToObject
+  addDataToObject,
+  deleteUserState,
 } = require("../stateManager");
 const { Op } = require("sequelize");
 const budgetRequest = require("../dbfiles/budgetRequests");
@@ -290,6 +291,8 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
         user,
         `Pronto! A solicitação ${brId} foi enviada`
       );
+      deleteUserState(user)
+
   }
 
   console.log(estadoConversa);
