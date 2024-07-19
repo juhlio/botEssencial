@@ -10,7 +10,7 @@ const categories = database.define('budget_questions', {
     },
     orcId: Sequelize.INTEGER,
     equipId: Sequelize.INTEGER,
-    questionDescription: Sequelize.STRING,
+    questionId: Sequelize.STRING,
     replyId: Sequelize.INTEGER,
     reply: Sequelize.STRING,
 }, {

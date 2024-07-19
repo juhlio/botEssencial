@@ -12,7 +12,9 @@ const categories = database.define('budget_requests', {
     equipId: Sequelize.INTEGER,
     typeId: Sequelize.INTEGER,
     type: Sequelize.STRING,
-    orcDate: Sequelize.DATE,
+    created_by: Sequelize.STRING,
+    departament: Sequelize.STRING,
+    phoneNumber: Sequelize.STRING,
 }, {
     timestamps: true, // Adiciona created_at e updated_at
     createdAt: 'created_at', // Personaliza o nome do campo created_at (opcional)

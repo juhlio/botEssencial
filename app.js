@@ -8,7 +8,7 @@ const fileUpload = require("express-fileupload");
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
-const { setUserState, getUserState } = require("./stateManager");
+const { setUserState, getUserState, deleteUserState } = require("./stateManager");
 const orcamentos = require('./flows/orcamentos')
 const orcamentoTanque = require('./flows/orcamentoTanque');
 const { handleSuporteTecnicoState } = require("./flows/suporteTecnico");
@@ -54,8 +54,10 @@ async function menuPrincipal() {
     let state = getUserState(user);
     let estadoConversa = getUserState(user);
 
-    if (!state || state.type == 'menuPrincipal' ) {
-      if (msg.body.toLowerCase() === "começar") {
+
+    if (!state || state.type == 'menuPrincipal' || msg.body.toLocaleLowerCase() == 'inicio' || msg.body.toLowerCase() == 'início' ) {
+      if (msg.body.toLowerCase() === "começar" || msg.body.toLowerCase() == "inicio" || msg.body.toLowerCase() == "início") {
+        deleteUserState(user)
         msg.reply(
           "Olá! Tudo bem? Escolha uma das opções abaixo: \n\n 1 - Orçamentos\n 2 - Suporte Técnico"
         );

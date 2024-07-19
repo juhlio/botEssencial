@@ -14,13 +14,14 @@ const clientes = require("../dbfiles/clients");
 async function orcamentoTanque(client, msg, estadoConversa, user) {
   console.log(estadoConversa);
 
-  if (msg.body.toLowerCase() === "inicio") {
-    estadoConversa.step = "";
-    estadoConversa.data = {}; // Limpa os dados anteriores
-    estadoConversa.type = "menuPrincipal";
-    await client.sendMessage(user, "Você voltou ao menu principal.");
+  if (msg.body.toLowerCase() === "inicio" || msg.body.toLowerCase === 'início') {
+    deleteUserState(user)
+    await client.sendMessage(user, "Voltando ao menu principal...");
     //menuPrincipal.menuPrincipal(client, msg, estadoConversa, user); // Chama a função do menu principal
+
+
   }
+  
 
   switch (estadoConversa.step) {
     case "0":
@@ -32,7 +33,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
     case "1":
       estadoConversa.step = "2";
       updateUserData(user, { step: "2"});
-      addDataToObject(user, { nomeSolicitante: msg.body });
+      addDataToObject(user, { 1: msg.body });
       //estadoConversa.data.nomeSolicitante = msg.body;
       await client.sendMessage(
         user,
@@ -42,7 +43,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       
       case "2":
         updateUserData(user, { step: "3"});
-        addDataToObject(user, {departamentoSolicitante: msg.body})
+        addDataToObject(user, {2: msg.body})
       /* estadoConversa.step = "3";
       estadoConversa.data.departamentoSolicitante = msg.body; */
       await client.sendMessage(
@@ -72,8 +73,8 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
           // Transforme os clientes encontrados em uma string para enviar ao usuário
           console.log(clientesEncontrados);
           const listaClientes = clientesEncontrados
-            .map((cliente) => `${cliente.id} - ${cliente.nome}`)
-            .join(", ");
+            .map((cliente) => `*${cliente.id}* - ${cliente.nome} \n`)
+            .join(" ");
           await client.sendMessage(
             user,
             `Clientes encontrados: \n ${listaClientes}.\n Para prosseguir, digite o id referente ao cliente da solicitação, é o número que aparece a esquerda do nome`
@@ -98,7 +99,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
 
     case "4":
       updateUserData(user, { step: "5"});
-      addDataToObject(user, {idCliente: msg.body})
+      addDataToObject(user, {3: parseInt(msg.body)})
       await client.sendMessage(
         user,
         "Digite o tipo do tanque a ser orçado: \n\n 1 - Horizontal \n 2 - Vertical"
@@ -108,15 +109,17 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
     case "5":
       if (msg.body === "1") {
         updateUserData(user, { step: "6"});
-        addDataToObject(user, {tipoTanque: "Horizontal"})
+        addDataToObject(user, {4: "Horizontal"})
+        console.log(typeof(estadoConversa.idCliente))
+        console.log(estadoConversa.idCliente)
         await client.sendMessage(
           user,
           "Qual a litragem do Tanque? Digite apelas o numero em litros"
         );
         break;
       } else if (msg.body === "2") {
-        updateUserData(user, { step: "3"});
-        addDataToObject(user, {tipoTanque: "Vertical"})
+        updateUserData(user, { step: "6"});
+        addDataToObject(user, {4: "Vertical"})
         await client.sendMessage(
           user,
           "Qual a litragem do Tanque? Digite apelas o numero em litros"
@@ -132,7 +135,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
 
     case "6":
       updateUserData(user, { step: "7"});
-      addDataToObject(user, {litros: msg.body})
+      addDataToObject(user, {5: msg.body})
       await client.sendMessage(
         user,
         `Precisa de contenção? Digite 1 para "Sim" e 2 para "Não"`
@@ -150,7 +153,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
     case "7":
       if (msg.body === "1") {
         updateUserData(user, { step: "8"});
-        addDataToObject(user, {contencao: "Sim"})
+        addDataToObject(user, {6: "Sim"})
         await client.sendMessage(
           user,
           "Qual o tipo de contenção? \n\n 1 - Alvenaria \n 2 - Metalica"
@@ -158,7 +161,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
         break;
       } else if (msg.body === "2") {
         updateUserData(user, { step: "9"});
-        addDataToObject(user, {contencao: "Não", tipoContencao: "N/A"})
+        addDataToObject(user, {6: "Não", 7: "N/A"})
         await client.sendMessage(
           user,
           "Vamos falar sobre a medida do local de instação do Tanque"
@@ -179,7 +182,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
     case "8":
       if (msg.body === "1") {
         updateUserData(user, { step: "9"});
-        addDataToObject(user, {tipoContencao: "Alvenaria"})
+        addDataToObject(user, {7: "Alvenaria"})
         await client.sendMessage(
           user,
           "Vamos falar sobre a medida do local de instação do Tanque"
@@ -191,7 +194,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
         break;
       } else if (msg.body === "2") {
         updateUserData(user, { step: "9"});
-        addDataToObject(user, {tipoContencao: 'Metalica'})
+        addDataToObject(user, {7: 'Metalica'})
         await client.sendMessage(
           user,
           "Vamos falar sobre a medida do local de instação do Tanque"
@@ -210,7 +213,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       }
     case "9":
       updateUserData(user, { step: "10"});
-      addDataToObject(user, {alturaLocal: msg.body})
+      addDataToObject(user, {8: msg.body})
       await client.sendMessage(
         user,
         `Qual a largura do local? Digite apenas os números em "Metros"`
@@ -218,7 +221,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       break;
     case "10":
       updateUserData(user, { step: "11"});
-      addDataToObject(user, {larguraLocal: msg.body})
+      addDataToObject(user, {9: msg.body})
       await client.sendMessage(
         user,
         `Qual a comprimento do local? Digite apenas os números em "Metros"`
@@ -226,7 +229,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       break;
     case "11":
       updateUserData(user, { step: "12"});
-      addDataToObject(user, {comprimentoLocal: msg.body})
+      addDataToObject(user, {10: msg.body})
       await client.sendMessage(
         user,
         "Qual tipo de tubulação? Por favor, especifique os diametros internos e externos, modelos e quantidades necessárias para a instalação"
@@ -234,7 +237,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       break;
     case "12":
       updateUserData(user, { step: "13"});
-      addDataToObject(user, {tubulacao: msg.body})
+      addDataToObject(user, {11: msg.body})
       await client.sendMessage(
         user,
         "Qual tipo de conexão? Por favor, especifique os diametros internos e externos, modelos e quantidades necessárias para a instalação"
@@ -242,7 +245,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       break;
     case "13":
       updateUserData(user, { step: "14"});
-      addDataToObject(user, {conexao: msg.body})
+      addDataToObject(user, {12: msg.body})
       await client.sendMessage(
         user,
         `Informações Preenchidas! Revise seu pedido:\n
@@ -267,12 +270,14 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
     case "14":
       await client.sendMessage(user, "Finalizando e enviando..");
       let newBudget = await budgetRequest.create({
-        orcId: 1,
-        clientId: 3,
-        equipId: 2152016,
+
+        clientId: estadoConversa.data[3],
+        equipId: null,
         typeId: 1,
-        type: "Orcamento de Tanque",
-        orcDate: "2024-07-15",
+        type: "Orçamento de Tanque",
+        created_by: estadoConversa.data[1],
+        departament: estadoConversa.data[2],
+        phoneNumber:estadoConversa.user,
       });
 
       brId = newBudget.dataValues.id;
@@ -280,9 +285,8 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       for (const [key, value] of Object.entries(estadoConversa.data)) {
         await budgetQuestions.create({
           orcId: brId,
-          equipId: 2152016,
-          questionDescription: key,
-          replyId: 8,
+          equipId: null,
+          questionId: key,
           reply: value,
         });
       }
