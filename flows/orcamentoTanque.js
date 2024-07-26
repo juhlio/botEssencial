@@ -249,17 +249,17 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
       await client.sendMessage(
         user,
         `Informações Preenchidas! Revise seu pedido:\n
-              Tipo do Tanque: *${estadoConversa.data.tipoTanque}* 
-              Litragem: *${estadoConversa.data.litros}* 
-              Precisa de Contenção: *${estadoConversa.data.contencao}* 
-              Tipo de Contenção: *${estadoConversa.data.tipoContencao}* 
+              Tipo do Tanque: *${estadoConversa.data[4]}* 
+              Litragem: *${estadoConversa.data[5]}* 
+              Precisa de Contenção: *${estadoConversa.data[6]}* 
+              Tipo de Contenção: *${estadoConversa.data[7]}* 
 
               Medidas do Local:  
-              Altura - *${estadoConversa.data.alturaLocal}m* 
-              Largura - *${estadoConversa.data.larguraLocal}m* 
-              Comprimento - *${estadoConversa.data.comprimentoLocal}m*
+              Altura - *${estadoConversa.data[8]}m* 
+              Largura - *${estadoConversa.data[9]}m* 
+              Comprimento - *${estadoConversa.data[10]}m*
 
-              Sobre a tubulaçao: *${estadoConversa.data.tubulacao}*
+              Sobre a tubulaçao: *${estadoConversa.data[11]}*
               Sobre as conexões: *${msg.body}*\n
             
               Para confirmar as informações e enviar digite *"1"*
