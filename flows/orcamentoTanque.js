@@ -5,6 +5,7 @@ const {
   addDataToObject,
   deleteUserState,
 } = require("../stateManager");
+const sendMail = require('../controllers/sendMail');
 const { Op } = require("sequelize");
 const budgetRequest = require("../dbfiles/budgetRequests");
 const budgetQuestions = require("../dbfiles/budgetQuestions");
@@ -295,6 +296,7 @@ async function orcamentoTanque(client, msg, estadoConversa, user) {
         user,
         `Pronto! A solicitação ${brId} foi enviada`
       );
+      await sendMail.sendMail(estadoConversa, brId);
       deleteUserState(user)
 
   }
