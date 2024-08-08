@@ -1,9 +1,7 @@
 const { setUserState, getUserState, deleteUserState, updateUserData, addDataToObject } = require('../stateManager');
-const menuPrincipal = require('../app')
 
-// Função para processar a conversa
-async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
-    console.log(`Inicio menu orçamentos`)
+async function inicioMenuComercial(client, msg, estadoConversa, user) {
+    console.log(`Inicio menu comercial`)
     console.log(estadoConversa);
 
     if (msg.body.toLowerCase() === 'inicio') {
@@ -22,19 +20,18 @@ async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
             updateUserData(user, {step: '1'})
             await client.sendMessage(
                 user,
-                'Você escolheu equipe Técnica. Escolha a funcionalidade desejada: \n\n 1 - Orçamento de Tanques \n 2 - Outros\n\n Ou digite "Inicio" para acessar o menu principal'
+                'Você escolheu equipe Comercial. Escolha a funcionalidade desejada: \n\n 1 - Visita Técnica \n 2 - Outros\n\n Ou digite "Inicio" para acessar o menu principal'
             );
             break;
 
         case '1':
             if (msg.body === '1') {
             
-                updateUserData(user, {type: "orcamentoTanque", step: "0"});
-                addDataToObject(user, {tipoOrcamento: 'Tanque'})
+                updateUserData(user, {type: "visitaTecnica", step: "0"});
                 /* estadoConversa.data.tipoOrcamento = 'Tanque';
                 estadoConversa.type = 'orcamentoTanque' */
                 estadoConversa.step = '0'
-                await client.sendMessage(user, 'Você será redirecionado para iniciar o orçamento de tanque. Confirma?')
+                await client.sendMessage(user, 'Você será redirecionado para iniciar a  Visita Técnica. Confirma?')
                 break
             } else if (msg.body === '2') {
                 estadoConversa.data.tipoOrcamento = 'Outros';
@@ -72,5 +69,5 @@ async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
 }
 
 module.exports = {
-    inicioMenuOrcamentos
+    inicioMenuComercial
 };

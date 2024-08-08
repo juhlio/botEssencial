@@ -24,7 +24,7 @@
     "express-fileupload": "^1.2.0",
     "express-validator": "^6.9.2",
     "http": "0.0.1-security",
-    "mime-types": "^2.1.32",
+    "mime-types": "^2.1.35",
     "mysql2": "^2.3.3",
     "node-cron": "^3.0.2",
     "openai": "^3.2.1",
