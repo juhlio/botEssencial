@@ -22,6 +22,7 @@ const path = require("path");
 const mime = require('mime-types');
 const comercial = require('./flows/comercial');
 const visitaTecnica = require('./flows/visitaTecnica')
+const geraPdf = require('./controllers/geraPdf');
 
 // PORTA ONDE O SERVIÇO SERÁ INICIADO
 const port = 8000;
@@ -62,21 +63,8 @@ async function menuPrincipal() {
     const user = msg.from;
     let state = getUserState(user);
     let estadoConversa = getUserState(user);
-
-   /*  if (msg.hasMedia) {
-      const media = await msg.downloadMedia();
-      const extension = mime.extension(media.mimetype);
-      const fileName = media.filename ? media.filename : `media_${Date.now()}.${extension}`;
-      const mediaPath = path.join(__dirname, 'medias', fileName);
-
-      fs.writeFile(mediaPath, media.data, 'base64', (err) => {
-          if (err) {
-              console.error('Erro ao salvar o arquivo de mídia:', err);
-          } else {
-              console.log('Arquivo de mídia salvo com sucesso:', mediaPath);
-          }
-      });
-  } */
+    
+    await geraPdf.geraPdf();
     
 
     if (
