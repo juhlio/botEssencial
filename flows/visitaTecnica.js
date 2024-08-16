@@ -4,11 +4,14 @@ const {
   updateUserData,
   addDataToObject,
   deleteUserState,
+  addTempEquipToObject,
+  transferTempEquipToEquips,
 } = require("../stateManager");
 const { Op } = require("sequelize");
 const commercialVisitsRequests = require("../dbfiles/commercialVisitsRequests");
 const commercialVisitsQuestions = require("../dbfiles/commercialVisitsQuestions");
 const commercialVisitsImages = require("../dbfiles/commercialVisitsImages");
+const commercialVisitsEquipaments = require("../dbfiles/commercialVisitsEquipaments");
 const clientes = require("../dbfiles/clients");
 const fs = require("fs");
 const path = require("path");
@@ -95,34 +98,63 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
 
     case "7":
       updateUserData(user, { step: "8" });
+
       addDataToObject(user, { 7: msg.body });
-      await client.sendMessage(user, `Agora começaremos com as medições`);
-      await client.sendMessage(user, "Digite a corrente aferida");
-      await client.sendMessage(user, "Começando pelo QGBT (Adm)");
+      await client.sendMessage(
+        user,
+        `Agora começaremos a adicionar os Equipamentos do Local:`
+      );
+      await client.sendMessage(
+        user,
+        "Qual o tipo do equipamento? Ex: Elevador de serviço, Elevador Social, Bomba de Recalque..."
+      );
       break;
 
     case "8":
       updateUserData(user, { step: "9" });
-      addDataToObject(user, { 8: msg.body });
-      await client.sendMessage(
-        user,
-        `Agora do Elevador de Serviço em seu pico`
-      );
+      addTempEquipToObject(user, { type: msg.body });
+
+      //equipObj.type = msg.body; // Armazena o tipo do equipamento
+      await client.sendMessage(user, `Qual a corrente do equipamento em pico?`);
       break;
 
     case "9":
       updateUserData(user, { step: "10" });
-      addDataToObject(user, { 9: msg.body });
+      addTempEquipToObject(user, { pico: msg.body });
       await client.sendMessage(user, `E em operação:`);
       break;
+
     case "10":
       updateUserData(user, { step: "11" });
-      addDataToObject(user, { 10: msg.body });
-      await client.sendMessage(user, `Agora o elevador social`);
-      await client.sendMessage(user, `Qual a corrente em seu pico?`);
+
+      addTempEquipToObject(user, { operacao: msg.body });
+      await transferTempEquipToEquips(user);
+
+      await client.sendMessage(
+        user,
+        `Deseja adicionar outro equipamento? \n 1 - Sim \n 2 - Não`
+      );
       break;
+
     case "11":
-      updateUserData(user, { step: "12" });
+      if (msg.body === "1") {
+        updateUserData(user, { step: "8" });
+        await client.sendMessage(
+          user,
+          "Qual o tipo do equipamento? Ex: Elevador de serviço, Elevador Social, Bomba de Recalque..."
+        );
+        break;
+      } else if (msg.body === "2") {
+        updateUserData(user, { step: "14" });
+        await client.sendMessage(user, `Agora vamos às aferições de tensão...`);
+        await client.sendMessage(user, `RN`);
+        break;
+      } else {
+        await client.sendMessage(user, "Comando inválido, tente novamente.");
+      }
+      break;
+
+    /*   updateUserData(user, { step: "12" });
       addDataToObject(user, { 11: msg.body });
       await client.sendMessage(user, "E em operação?");
       break;
@@ -140,7 +172,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
       addDataToObject(user, { 13: msg.body });
       await client.sendMessage(user, `Agora vamos as aferições de tensão...`);
       await client.sendMessage(user, `RN`);
-      break;
+      break; */
     case "14":
       updateUserData(user, { step: "15" });
       addDataToObject(user, { 14: msg.body });
@@ -775,6 +807,8 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
 
     case "36":
       await client.sendMessage(user, "Finalizando e enviando..");
+
+      // Criando a visita no banco de dados
       let newVisit = await commercialVisitsRequests.create({
         type: estadoConversa.type,
         phoneNumber: estadoConversa.user,
@@ -782,6 +816,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
 
       vrId = newVisit.dataValues.id;
 
+      // Enviando as perguntas e respostas ao banco de dados
       for (const [key, value] of Object.entries(estadoConversa.data)) {
         await commercialVisitsQuestions.create({
           visitId: vrId,
@@ -789,43 +824,59 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
           reply: value,
         });
 
+        // Caso seja foto, enviando para a tabela correta
         if (key >= 20 && key <= 35) {
           await commercialVisitsImages.create({
             visitId: vrId,
             imageName: value,
             status: false,
           });
-
-          const apiUrl =
-            "http://localhost/painelessencial/public/comercial/visitastecnicas/baixar/fotos";
-
-          // Chamada para a API
-          const response = await fetch(apiUrl, {
-            method: "GET", // Ou 'POST', conforme necessário
-            headers: {
-              "Content-Type": "application/json",
-              // Adicione outros cabeçalhos se necessário
-            },
-          });
-
-          const filePath = path.join(__dirname, "..", "medias", value);
-
-          // Excluir o arquivo
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.error(`Erro ao excluir o arquivo ${value}:`, err);
-            } else {
-              console.log(`Arquivo ${value} excluído com sucesso.`);
-            }
-          });
         }
+      }
+
+      // Enviando os equipamentos aferidos para a tabela correspondente
+      for (const equip of estadoConversa.equips) {
+        await commercialVisitsEquipaments.create({
+          visitId: vrId,
+          type: equip.type,
+          corrente_pico: equip.pico,
+          corrente_operacao: equip.operacao,
+        });
+      }
+
+      const apiUrl =
+        "http://localhost/painelessencial/public/comercial/visitastecnicas/baixar/fotos";
+
+      // Chamada para a API
+      const response = await fetch(apiUrl, {
+        method: "GET", // Ou 'POST', conforme necessário
+        headers: {
+          "Content-Type": "application/json",
+          // Adicione outros cabeçalhos se necessário
+        },
+      });
+
+      // Iterando sobre as fotos para excluir cada uma
+      for (const value of Object.values(estadoConversa.data)) {
+        const filePath = path.join(__dirname, "..", "medias", value);
+
+        // Excluir o arquivo
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.error(`Erro ao excluir o arquivo ${value}:`, err);
+          } else {
+            console.log(`Arquivo ${value} excluído com sucesso.`);
+          }
+        });
       }
 
       await client.sendMessage(
         user,
         `Pronto! A solicitação ${vrId} foi enviada`
       );
+
       deleteUserState(user);
+      break;
   }
 
   console.log(estadoConversa);

@@ -104,6 +104,8 @@ async function menuPrincipal() {
           type: "comercial",
           step: "0",
           data: {},
+          equips:[],
+          tempEquip: {},
         });
         estadoConversa = getUserState(user);
         await comercial.inicioMenuComercial(
