@@ -22,7 +22,7 @@ const path = require("path");
 const mime = require('mime-types');
 const comercial = require('./flows/comercial');
 const visitaTecnica = require('./flows/visitaTecnica')
-const geraPdf = require('./controllers/geraPdf');
+
 
 // PORTA ONDE O SERVIÇO SERÁ INICIADO
 const port = 8000;
@@ -63,9 +63,7 @@ async function menuPrincipal() {
     const user = msg.from;
     let state = getUserState(user);
     let estadoConversa = getUserState(user);
-    
-    await geraPdf.geraPdf();
-    
+       
 
     if (
       !state ||

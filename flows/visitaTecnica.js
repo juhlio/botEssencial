@@ -8,6 +8,7 @@ const {
   transferTempEquipToEquips,
 } = require("../stateManager");
 const { Op } = require("sequelize");
+const generatePDF = require("../controllers/geraPdf")
 const commercialVisitsRequests = require("../dbfiles/commercialVisitsRequests");
 const commercialVisitsQuestions = require("../dbfiles/commercialVisitsQuestions");
 const commercialVisitsImages = require("../dbfiles/commercialVisitsImages");
@@ -844,6 +845,32 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         });
       }
 
+          // Exemplo de uso
+     await  generatePDF.generatePDF(
+      "output.pdf",
+      "Julio Ramos", // Consultor
+      estadoConversa.data[1], // Cliente
+      estadoConversa.data[2], // Endereço
+      estadoConversa.data[3], // Contato
+      estadoConversa.data[4], // Tipo de Cliente
+      [
+        estadoConversa.data[20],
+        estadoConversa.data[21],
+        estadoConversa.data[22],
+        estadoConversa.data[23],
+        estadoConversa.data[24],
+        estadoConversa.data[25],
+        estadoConversa.data[26],
+        estadoConversa.data[27],
+        estadoConversa.data[28],
+        estadoConversa.data[29],
+        estadoConversa.data[30],
+        estadoConversa.data[31],
+        estadoConversa.data[32],
+      ] // Caminhos para as 16 imagens
+    );
+
+
       const apiUrl =
         "http://localhost/painelessencial/public/comercial/visitastecnicas/baixar/fotos";
 
@@ -870,6 +897,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         });
       }
 
+  
       await client.sendMessage(
         user,
         `Pronto! A solicitação ${vrId} foi enviada`

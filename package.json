@@ -30,6 +30,7 @@
     "openai": "^3.2.1",
     "pb-util": "^1.0.3",
     "pdfkit": "^0.15.0",
+    "pdfkit-table": "^0.1.99",
     "qrcode": "^1.4.4",
     "sequelize": "^6.37.3",
     "socket.io": "2.3.0",
