@@ -13,6 +13,7 @@ const commercialVisitsRequests = require("../dbfiles/commercialVisitsRequests");
 const commercialVisitsQuestions = require("../dbfiles/commercialVisitsQuestions");
 const commercialVisitsImages = require("../dbfiles/commercialVisitsImages");
 const commercialVisitsEquipaments = require("../dbfiles/commercialVisitsEquipaments");
+const sendMailVisitasTecnicas = require("../controllers/sendMailVisitaTecnica");
 const clientes = require("../dbfiles/clients");
 const fs = require("fs");
 const path = require("path");
@@ -847,12 +848,22 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
 
           // Exemplo de uso
      await  generatePDF.generatePDF(
-      "output.pdf",
+      "medias/output.pdf",
       "Julio Ramos", // Consultor
       estadoConversa.data[1], // Cliente
       estadoConversa.data[2], // Endereço
       estadoConversa.data[3], // Contato
       estadoConversa.data[4], // Tipo de Cliente
+      estadoConversa.data[5], //quantidade salas|apartamentos
+      estadoConversa.data[6], //quantidade Torres
+      estadoConversa.data[7], //quantidade bombas
+      estadoConversa.equips, //equipamentos
+      estadoConversa.data[14],//RN
+      estadoConversa.data[15],//SN
+      estadoConversa.data[16],//TN
+      estadoConversa.data[17],//RS
+      estadoConversa.data[18],//ST
+      estadoConversa.data[19],//TR
       [
         estadoConversa.data[20],
         estadoConversa.data[21],
@@ -870,6 +881,8 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
       ] // Caminhos para as 16 imagens
     );
 
+    await sendMailVisitasTecnicas.sendMailVisitaTecnica(estadoConversa, vrId);
+
 
       const apiUrl =
         "http://localhost/painelessencial/public/comercial/visitastecnicas/baixar/fotos";
@@ -883,7 +896,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         },
       });
 
-      // Iterando sobre as fotos para excluir cada uma
+   /*    // Iterando sobre as fotos para excluir cada uma
       for (const value of Object.values(estadoConversa.data)) {
         const filePath = path.join(__dirname, "..", "medias", value);
 
@@ -895,7 +908,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
             console.log(`Arquivo ${value} excluído com sucesso.`);
           }
         });
-      }
+      } */
 
   
       await client.sendMessage(

@@ -9,6 +9,16 @@ function generatePDF(
   endereco,
   contato,
   tipoCliente,
+  salasApartamentos,
+  torres,
+  bombas,
+  equips,
+  rn,
+  sn,
+  tn,
+  rs,
+  st,
+  tr,
   imagePaths
 ) {
   const doc = new PDFDocument({
@@ -102,10 +112,9 @@ function generatePDF(
   const structureTable = {
     headers: ["ITEM", "QUANTIDADE"],
     rows: [
-      ["APARTAMENTOS", "50"],
-      ["TORRES", "5"],
-      ["ELEVADORES", "10"],
-      ["BOMBAS", "8"],
+      ["APARTAMENTOS", salasApartamentos],
+      ["TORRES", torres],
+      ["BOMBAS", bombas],
     ],
   };
 
@@ -117,39 +126,23 @@ function generatePDF(
     y: yPosition + 20, // Define a posição Y para alinhar corretamente
   });
 
-  // Tabela Elevadores
-  doc.text("ELEVADORES", rightColumnX, yPosition);
+  // Espaço antes da nova tabela
+  doc.moveDown(2);
+
+  // Espaço antes da nova tabela
+  doc.moveDown(2);
+
+  // Título da tabela
+  doc.text("EQUIPAMENTOS", leftColumnX, doc.y);
   doc.moveDown(0.5);
-  const elevatorsTable = {
+
+  // Constrói as linhas da tabela dinamicamente com base no array equips
+  const equipmentsTable = {
     headers: ["TIPO", "PICO", "OPERAÇÃO"],
-    rows: [
-      ["ELEVADOR SERVIÇO", "1500W", "Automática"],
-      ["ELEVADOR SOCIAL", "1200W", "Manual"],
-    ],
+    rows: equips.map((equip) => [equip.type, equip.pico, equip.operacao]),
   };
 
-  doc.table(elevatorsTable, {
-    prepareHeader: () => doc.fontSize(12).fillColor("#000000"),
-    prepareRow: (row, i) => doc.fontSize(10).fillColor("#000000"),
-    width: tableWidthContent,
-    x: rightColumnX,
-    y: yPosition + 20, // Define a posição Y para alinhar corretamente
-  });
-
-  // Subir a tabela Bombas
-  doc.moveDown(2); // Ajuste para garantir que a tabela Bombas fique logo abaixo das anteriores
-
-  doc.text("BOMBAS", leftColumnX, doc.y);
-  doc.moveDown(0.5);
-  const pumpsTable = {
-    headers: ["TIPO", "PICO", "OPERAÇÃO"],
-    rows: [
-      ["RECALQUE", "3000W", "Contínua"],
-      ["RECALQUE", "2500W", "Intermitente"],
-    ],
-  };
-
-  doc.table(pumpsTable, {
+  doc.table(equipmentsTable, {
     prepareHeader: () => doc.fontSize(12).fillColor("#000000"),
     prepareRow: (row, i) => doc.fontSize(10).fillColor("#000000"),
     width: tableWidthContent,
@@ -165,7 +158,7 @@ function generatePDF(
     doc.page.width - doc.page.margins.left - doc.page.margins.right;
   const phasesTable = {
     headers: ["RN", "SN", "TN", "RS", "ST", "TR"],
-    rows: [["10", "11", "12", "13", "14", "15"]],
+    rows: [[rn,sn,tn,rs,st,tr]],
   };
 
   doc.table(phasesTable, {
