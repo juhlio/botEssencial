@@ -8,11 +8,21 @@ const fileUpload = require("express-fileupload");
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
-const { setUserState, getUserState, deleteUserState } = require("./stateManager");
-const orcamentos = require('./flows/orcamentos')
-const orcamentoTanque = require('./flows/orcamentoTanque');
+const {
+  setUserState,
+  getUserState,
+  deleteUserState,
+} = require("./stateManager");
+const orcamentos = require("./flows/orcamentos");
+const orcamentoTanque = require("./flows/orcamentoTanque");
 const { handleSuporteTecnicoState } = require("./flows/suporteTecnico");
 const { ConversationProfilesClient } = require("@google-cloud/dialogflow");
+const fs = require("fs");
+const path = require("path");
+const mime = require('mime-types');
+const comercial = require('./flows/comercial');
+const visitaTecnica = require('./flows/visitaTecnica')
+
 
 // PORTA ONDE O SERVIÇO SERÁ INICIADO
 const port = 8000;
@@ -26,6 +36,8 @@ app.use("/", express.static(__dirname + "/"));
 app.get("/", (req, res) => {
   res.sendFile("index.html", { root: __dirname });
 });
+
+app.use('/medias', express.static(path.join(__dirname, 'medias')));
 
 // PARÂMETROS DO CLIENT DO WPP
 const client = new Client({
@@ -45,49 +57,81 @@ const client = new Client({
   },
 });
 
-
-
 async function menuPrincipal() {
   // EVENTO DE ESCUTA/ENVIO DE MENSAGENS RECEBIDAS PELA API
   client.on("message", async (msg) => {
     const user = msg.from;
     let state = getUserState(user);
     let estadoConversa = getUserState(user);
+       
 
-
-    if (!state || state.type == 'menuPrincipal' || msg.body.toLocaleLowerCase() == 'inicio' || msg.body.toLowerCase() == 'início' ) {
-      if (msg.body.toLowerCase() === "começar" || msg.body.toLowerCase() == "inicio" || msg.body.toLowerCase() == "início") {
-        deleteUserState(user)
+    if (
+      !state ||
+      state.type == "menuPrincipal" ||
+      msg.body.toLocaleLowerCase() == "inicio" ||
+      msg.body.toLowerCase() == "início"
+    ) {
+      if (
+        msg.body.toLowerCase() === "começar" ||
+        msg.body.toLowerCase() == "inicio" ||
+        msg.body.toLowerCase() == "início"
+      ) {
+        deleteUserState(user);
         msg.reply(
-          "Olá! Tudo bem? Escolha uma das opções abaixo: \n\n 1 - Orçamentos\n 2 - Suporte Técnico"
+          "Olá! Tudo bem? Escolha uma das opções abaixo: \n\n 1 - Equipe Técnica\n 2 - Comercial"
         );
         //setUserState(user, { type: 'menu_principal' });
       } else if (msg.body === "1") {
-        setUserState(user, {user: user, type: "orcamento", step: "0", data: {} });
+        setUserState(user, {
+          user: user,
+          type: "orcamento",
+          step: "0",
+          data: {},
+        });
         estadoConversa = getUserState(user);
         //console.log(estadoConversa);
-        await orcamentos.inicioMenuOrcamentos(client, msg, estadoConversa, user);
+        await orcamentos.inicioMenuOrcamentos(
+          client,
+          msg,
+          estadoConversa,
+          user
+        );
       } else if (msg.body === "2") {
-        client.sendMessage(
+        setUserState(user, {
+          user: user,
+          type: "comercial",
+          step: "0",
+          data: {},
+          equips:[],
+          tempEquip: {},
+        });
+        estadoConversa = getUserState(user);
+        await comercial.inicioMenuComercial(
+          client,
+          msg,
+          estadoConversa,
+          user
+        );
+        /* client.sendMessage(
           user,
           "Você escolheu Suporte Técnico. Por favor, descreva o problema:"
         );
-        setUserState(user, { type: "suporte_tecnico_problema" });
+        setUserState(user, { type: "suporte_tecnico_problema" }); */
       } else {
         client.sendMessage(
           user,
           "Opção inválida. Digite 'Começar' para iniciar."
         );
       }
-    } else if (state.type == 'orcamento') {
+    } else if (state.type == "orcamento") {
       await orcamentos.inicioMenuOrcamentos(client, msg, estadoConversa, user);
-      
-    } else if (state.type == 'orcamentoTanque'){
-      await orcamentoTanque.orcamentoTanque(client,msg, estadoConversa, user)
-    }; 
-
-
-    
+    } else if (state.type == "orcamentoTanque") {
+      await orcamentoTanque.orcamentoTanque(client, msg, estadoConversa, user);
+    }else if(state.type == "comercial"){
+      await comercial.inicioMenuComercial(client, msg, estadoConversa, user)
+    }else if(state.type == "visitaTecnica"){
+      await visitaTecnica.visitaTecnica(client, msg, estadoConversa, user)
+    }
   });
 }
 
@@ -192,7 +236,6 @@ server.listen(port, function () {
   console.log("© Bot Essencial - Aplicativo rodando na porta *: " + port);
 });
 
-
 module.exports = {
-  menuPrincipal
-}
+  menuPrincipal,
+};

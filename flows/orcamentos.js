@@ -22,7 +22,7 @@ async function inicioMenuOrcamentos(client, msg, estadoConversa, user) {
             updateUserData(user, {step: '1'})
             await client.sendMessage(
                 user,
-                'Você escolheu orçamentos. Digite o tipo do orçamento desejado: \n\n 1 - Tanques \n 2 - Outros\n\n Ou digite "Inicio" para acessar o menu principal'
+                'Você escolheu equipe Técnica. Escolha a funcionalidade desejada: \n\n 1 - Orçamento de Tanques \n 2 - Outros\n\n Ou digite "Inicio" para acessar o menu principal'
             );
             break;
 

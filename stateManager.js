@@ -88,6 +88,71 @@ const addDataToObject = (userId, dataToAdd) => {
   }
 };
 
+const addTempEquipToObject = (userId, tempEquip) => {
+  const filePath = path.join(userStateDirectory, `${userId}.json`);
+
+  if (!fs.existsSync(filePath)) {
+    console.error(`Arquivo JSON não encontrado: ${filePath}`);
+    return;
+  }
+
+  try {
+    const fileData = fs.readFileSync(filePath, 'utf-8');
+    const jsonData = JSON.parse(fileData);
+
+    if (!jsonData.tempEquip) {
+      jsonData.tempEquip = {}; // Cria o objeto tempEquip se não existir
+    }
+
+    // Adiciona ou atualiza o tempEquip
+    // Considerando que tempEquip é um objeto com a estrutura correta
+    Object.assign(jsonData.tempEquip, tempEquip);
+
+    fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+    console.log(`Dados adicionados ou atualizados com sucesso no objeto tempEquip no arquivo JSON: ${filePath}`);
+  } catch (error) {
+    console.error(`Erro ao adicionar dados ao objeto tempEquip no arquivo JSON: ${filePath}. Erro: ${error.message}`);
+  }
+};
+
+
+const transferTempEquipToEquips = (userId) => {
+  const filePath = path.join(userStateDirectory, `${userId}.json`);
+
+  if (!fs.existsSync(filePath)) {
+    console.error(`Arquivo JSON não encontrado: ${filePath}`);
+    return;
+  }
+
+  try {
+    const fileData = fs.readFileSync(filePath, 'utf-8');
+    const jsonData = JSON.parse(fileData);
+
+    // Verifica se tempEquip existe e é um objeto
+    if (jsonData.tempEquip && typeof jsonData.tempEquip === 'object' && Object.keys(jsonData.tempEquip).length > 0) {
+      // Cria o array equips se não existir
+      if (!jsonData.equips) {
+        jsonData.equips = [];
+      }
+
+      // Adiciona o objeto tempEquip ao array equips
+      jsonData.equips.push(jsonData.tempEquip);
+
+      // Limpa o objeto tempEquip
+      jsonData.tempEquip = {};
+
+      // Salva as alterações no arquivo JSON
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+      console.log(`Dados transferidos de tempEquip para equips e tempEquip limpo com sucesso no arquivo JSON: ${filePath}`);
+    } else {
+      console.log(`Nenhum dado para transferir de tempEquip para equips.`);
+    }
+  } catch (error) {
+    console.error(`Erro ao transferir dados de tempEquip para equips no arquivo JSON: ${filePath}. Erro: ${error.message}`);
+  }
+};
+
+
 module.exports = {
   setUserState,
   getUserState,
@@ -95,4 +160,6 @@ module.exports = {
   deleteUserState,
   updateUserData,
   addDataToObject,
+  addTempEquipToObject,
+  transferTempEquipToEquips,
 };
