@@ -103,6 +103,7 @@ async function menuPrincipal() {
           step: "0",
           data: {},
           equips:[],
+          items: [],
           tempEquip: {},
         });
         estadoConversa = getUserState(user);

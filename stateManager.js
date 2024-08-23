@@ -152,6 +152,73 @@ const transferTempEquipToEquips = (userId) => {
   }
 };
 
+const addSpecialItemToObject = (userId, specialItem) => {
+  const filePath = path.join(userStateDirectory, `${userId}.json`);
+
+  if (!fs.existsSync(filePath)) {
+    console.error(`Arquivo JSON não encontrado: ${filePath}`);
+    return;
+  }
+
+  try {
+    const fileData = fs.readFileSync(filePath, 'utf-8');
+    const jsonData = JSON.parse(fileData);
+
+    if (!jsonData.specialItems) {
+      jsonData.specialItems = {}; // Cria o objeto specialItems se não existir
+    }
+
+    // Adiciona ou atualiza o specialItem
+    // Considerando que specialItem é um objeto com a estrutura correta
+    Object.assign(jsonData.specialItems, specialItem);
+
+    fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+    console.log(`Item especial adicionado ou atualizado com sucesso no objeto specialItems no arquivo JSON: ${filePath}`);
+  } catch (error) {
+    console.error(`Erro ao adicionar item especial ao objeto specialItems no arquivo JSON: ${filePath}. Erro: ${error.message}`);
+  }
+};
+
+
+const transferSpecialItemsToItems = (userId) => {
+  const filePath = path.join(userStateDirectory, `${userId}.json`);
+
+  if (!fs.existsSync(filePath)) {
+    console.error(`Arquivo JSON não encontrado: ${filePath}`);
+    return;
+  }
+
+  try {
+    const fileData = fs.readFileSync(filePath, 'utf-8');
+    const jsonData = JSON.parse(fileData);
+
+    // Verifica se specialItems existe e é um objeto
+    if (jsonData.specialItems && typeof jsonData.specialItems === 'object' && Object.keys(jsonData.specialItems).length > 0) {
+      // Cria o array items se não existir
+      if (!jsonData.items) {
+        jsonData.items = [];
+      }
+
+      // Adiciona o objeto specialItems ao array items
+      jsonData.items.push(jsonData.specialItems);
+
+      // Limpa o objeto specialItems
+      jsonData.specialItems = {};
+
+      // Salva as alterações no arquivo JSON
+      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2));
+      console.log(`Itens especiais transferidos para items e specialItems limpo com sucesso no arquivo JSON: ${filePath}`);
+    } else {
+      console.log(`Nenhum item especial para transferir de specialItems para items.`);
+    }
+  } catch (error) {
+    console.error(`Erro ao transferir itens especiais de specialItems para items no arquivo JSON: ${filePath}. Erro: ${error.message}`);
+  }
+};
+
+
+
+
 
 module.exports = {
   setUserState,
@@ -162,4 +229,6 @@ module.exports = {
   addDataToObject,
   addTempEquipToObject,
   transferTempEquipToEquips,
+  addSpecialItemToObject,
+  transferSpecialItemsToItems
 };
