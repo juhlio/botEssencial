@@ -149,6 +149,11 @@ function generatePDF(
     x: leftColumnX,
   });
 
+  // Adiciona uma nova página se a tabela tiver entre 7 e 12 linhas
+  if (equips.length >= 6 && equips.length <= 12) {
+    doc.addPage();
+  }
+
   // Fases
   doc.text("FASES", leftColumnX, doc.y); // Insere o texto "FASES" na posição correta
   doc.moveDown(2);
@@ -158,7 +163,7 @@ function generatePDF(
     doc.page.width - doc.page.margins.left - doc.page.margins.right;
   const phasesTable = {
     headers: ["RN", "SN", "TN", "RS", "ST", "TR"],
-    rows: [[rn,sn,tn,rs,st,tr]],
+    rows: [[rn, sn, tn, rs, st, tr]],
   };
 
   doc.table(phasesTable, {
@@ -218,30 +223,13 @@ function generatePDF(
         // Ajusta a imagem para paisagem
         adjustedWidth = imageWidth;
         adjustedHeight = imageHeight;
-        doc.image(imagePath, x, y, {
-          width: adjustedWidth,
-          height: adjustedHeight,
-        });
+        doc.image(imagePath, x, y, { width: adjustedWidth, height: adjustedHeight });
       }
 
-      // Adiciona a legenda abaixo da imagem
-      doc
-        .fontSize(10)
-        .fillColor("#000000")
-        .text(`Legenda ${i + 1}`, x, y + adjustedHeight + 5, {
-          width: adjustedWidth,
-          align: "center",
-        });
-    } else {
-      // Placeholder para o caso de não haver imagem com contorno branco
-      doc.strokeColor("#FFFFFF").rect(x, y, imageWidth, imageHeight).stroke();
-      doc
-        .fontSize(10)
-        .fillColor("#000000")
-        .text(`Legenda ${i + 1}`, x, y + imageHeight + 5, {
-          width: imageWidth,
-          align: "center",
-        });
+      doc.fontSize(10).text(`Foto ${i + 1}`, x, y + adjustedHeight + 5, {
+        width: adjustedWidth,
+        align: "center",
+      });
     }
   }
 
