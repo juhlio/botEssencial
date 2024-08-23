@@ -18,7 +18,7 @@ async function sendMailVisitaTecnica(estadoConversa, vrId) {
         try {
             const info = await transporter.sendMail({
                 from: '"Essencial Energia" <bot@essencialenergia.com.br>', // Endereço do remetente
-                to: 'julioramos.esporte@gmail.com, juan@essencialenergia.com', // Lista de destinatários
+                to: 'julioramos.esporte@gmail.com', // Lista de destinatários
                 subject: `A solicitação ${vrId} foi criada`, // Assunto
                 text: `Nova Visita Tecnica Realizada.`, // Corpo do texto
                 html: `Uma nova visita técnica foi realizada, detalhes abaixo: <br>

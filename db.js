@@ -29,6 +29,15 @@ if (env == "tests") {
   dbPort = process.env.DEV_DB_PORT;
 } 
 
+TEST_DB_NAME="essencialenergia_painelteste"
+TEST_DB_USER="essencialenergia_painelteste"
+TEST_DB_PASS="Ju7Li8o("
+TEST_DB_HOST="187.45.189.73"
+TEST_DB_DIALECT="mysql"
+TEST_DB_PORT="3306"
+
+
+
 
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   dialect: dbDialect,
