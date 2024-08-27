@@ -828,6 +828,23 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         ); */
       }
 
+      let medicoes = "";
+      estadoConversa.equips.forEach((equip) => {
+        medicoes += `
+      Tipo: *${equip.type}*
+      Pico: *${equip.pico}*
+      Operação: *${equip.operacao}*
+  `;
+      });
+
+      let itensEspeciais = "";
+      estadoConversa.items.forEach((item) => {
+        itensEspeciais += `
+      Item: *${item.tipo}*
+      Especificação: *${item.espec}*
+  `;
+      });
+
       updateUserData(user, { step: "40" });
       await client.sendMessage(
         user,
@@ -836,21 +853,19 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               Endereço: *${estadoConversa.data[2]}*
               Quem Acompanhou: *${estadoConversa.data[3]}*
               Tipo de Cliente: *${estadoConversa.data[4]}*
-
-              Estrura:  
+      
+              Estrutura:  
               Apartamentos/Salas: *${estadoConversa.data[5]}m*
               Elevadores: *${estadoConversa.data[6]}m*
               Torres: *${estadoConversa.data[7]}m*
-
+      
               Medições:
-              QGBT: *${estadoConversa.data[8]}*
-              Elevador de Serviço (Pico): *${estadoConversa.data[9]}*
-              Elevador de Serviço (Operação): *${estadoConversa.data[10]}*
-              Elevador Social (Pico): *${estadoConversa.data[11]}*
-              Elevador Social (Operação): *${estadoConversa.data[12]}*
+              ${medicoes}
              
-              Bombas: *${estadoConversa.data[13]}*
-
+      
+              Itens Especiais:
+              ${itensEspeciais}
+      
               Tensões de Fases:
               RN: *${estadoConversa.data[14]}*
               SN: *${estadoConversa.data[15]}*
@@ -858,8 +873,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               RS: *${estadoConversa.data[17]}*
               ST: *${estadoConversa.data[18]}*
               TR: *${estadoConversa.data[19]}*
-             
-              `
+            `
       );
       client.sendMessage(user, `Vamos enviar as informações?`);
       break;
