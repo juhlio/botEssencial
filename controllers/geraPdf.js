@@ -12,6 +12,7 @@ function generatePDF(
   salasApartamentos,
   torres,
   bombas,
+  specialItems,
   equips,
   rn,
   sn,
@@ -126,8 +127,21 @@ function generatePDF(
     y: yPosition + 20, // Define a posição Y para alinhar corretamente
   });
 
-  // Espaço antes da nova tabela
-  doc.moveDown(2);
+  // Tabela Itens Especiais
+  doc.text("ITENS ESPECIAIS", rightColumnX, yPosition);
+  doc.moveDown(0.5);
+  const specialItemsTable = {
+    headers: ["ITEM", "ESPECIFICAÇÃO"],
+    rows: specialItems.map((item) => [item.tipo, item.espec]),
+  };
+
+  doc.table(specialItemsTable, {
+    prepareHeader: () => doc.fontSize(12).fillColor("#000000"),
+    prepareRow: (row, i) => doc.fontSize(10).fillColor("#000000"),
+    width: tableWidthContent,
+    x: rightColumnX,
+    y: yPosition + 20, // Define a posição Y para alinhar corretamente
+  });
 
   // Espaço antes da nova tabela
   doc.moveDown(2);
@@ -150,7 +164,7 @@ function generatePDF(
   });
 
   // Adiciona uma nova página se a tabela tiver entre 7 e 12 linhas
-  if (equips.length >= 6 && equips.length <= 12) {
+  if (equips.length >= 5 && equips.length <= 12) {
     doc.addPage();
   }
 
@@ -223,7 +237,10 @@ function generatePDF(
         // Ajusta a imagem para paisagem
         adjustedWidth = imageWidth;
         adjustedHeight = imageHeight;
-        doc.image(imagePath, x, y, { width: adjustedWidth, height: adjustedHeight });
+        doc.image(imagePath, x, y, {
+          width: adjustedWidth,
+          height: adjustedHeight,
+        });
       }
 
       doc.fontSize(10).text(`Foto ${i + 1}`, x, y + adjustedHeight + 5, {

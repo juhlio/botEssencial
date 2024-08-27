@@ -6,14 +6,18 @@ const {
   deleteUserState,
   addTempEquipToObject,
   transferTempEquipToEquips,
+  addSpecialItemToObject,
+  transferSpecialItemsToItems,
+  updateUserState,
 } = require("../stateManager");
 const { Op } = require("sequelize");
-const generatePDF = require("../controllers/geraPdf")
+const generatePDF = require("../controllers/geraPdf");
 const commercialVisitsRequests = require("../dbfiles/commercialVisitsRequests");
 const commercialVisitsQuestions = require("../dbfiles/commercialVisitsQuestions");
 const commercialVisitsImages = require("../dbfiles/commercialVisitsImages");
 const commercialVisitsEquipaments = require("../dbfiles/commercialVisitsEquipaments");
 const sendMailVisitasTecnicas = require("../controllers/sendMailVisitaTecnica");
+const commercialVisitsSpecialItems = require("../dbfiles/commercialVisitsSpecialItems");
 const clientes = require("../dbfiles/clients");
 const fs = require("fs");
 const path = require("path");
@@ -208,151 +212,66 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
       addDataToObject(user, { 19: msg.body });
       await client.sendMessage(
         user,
-        `Agora vamos anexar as imagens ao nosso relatório`
-      );
-      await client.sendMessage(
-        user,
-        `Começando pelas fotos do QGBT do cliente. Serão *2* imagens, envie a primeira.`
+        `Será necessário adicionar itens especiais? Digite apenas o número: \n 1 - Sim \n 2 - Não`
       );
       break;
 
     case "20":
-      if (msg.hasMedia) {
-        const media = await msg.downloadMedia();
-        const extension = mime.extension(media.mimetype);
-        const fileName = media.filename
-          ? media.filename
-          : `media_${Date.now()}.${extension}`;
-
-        // Usando path.resolve para subir um nível
-        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
-
-        fs.writeFile(mediaPath, media.data, "base64", (err) => {
-          if (err) {
-            console.error("Erro ao salvar o arquivo de mídia:", err);
-            client.sendMessage(
-              user,
-              "Não consegui gravar a imagem anterior, tente novamente por favor"
-            );
-          } else {
-            addDataToObject(user, { 20: fileName });
-            console.log("Arquivo de mídia salvo com sucesso:", mediaPath);
-            updateUserData(user, { step: "21" });
-            client.sendMessage(user, "Pronto! Agora envie a segunda imagem:");
-          }
-        });
-      } else {
+      if (msg.body === "1") {
+        updateUserData(user, { step: "21" });
+        await client.sendMessage(user, `Qual o item especial?`);
+        break;
+      } else if (msg.body === "2") {
+        updateUserData(user, { step: "24" });
         await client.sendMessage(
           user,
-          "Você não enviou a imagem. Tente novamente"
+          `Agora vamos anexar as imagens ao nosso relatório`
         );
+        await client.sendMessage(
+          user,
+          `Começando pelas fotos do QGBT do cliente. Serão *2* imagens, envie a primeira.`
+        );
+        break;
+      } else {
+        await client.sendMessage(user, `Não entendi, tente novamente!`);
       }
-      break;
 
     case "21":
-      if (msg.hasMedia) {
-        const media = await msg.downloadMedia();
-        const extension = mime.extension(media.mimetype);
-        const fileName = media.filename
-          ? media.filename
-          : `media_${Date.now()}.${extension}`;
-
-        // Usando path.resolve para subir um nível
-        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
-
-        fs.writeFile(mediaPath, media.data, "base64", (err) => {
-          if (err) {
-            console.error("Erro ao salvar o arquivo de mídia:", err);
-            client.sendMessage(
-              user,
-              "Não consegui gravar a segunda imagem, tente novamente por favor"
-            );
-          } else {
-            addDataToObject(user, { 21: fileName });
-            console.log("Arquivo de mídia salvo com sucesso:", mediaPath);
-            updateUserData(user, { step: "22" });
-            client.sendMessage(
-              user,
-              "Agora envie as imagens do local destinado ao QGBT. São *2* fotos, envie a primeira."
-            );
-          }
-        });
-      } else {
-        await client.sendMessage(
-          user,
-          "Você não enviou a segunda imagem. Tente novamente"
-        );
-      }
+      addSpecialItemToObject(user, { tipo: msg.body });
+      updateUserData(user, { step: "22" });
+      await client.sendMessage(user, `E quais são as especificações do item?`);
       break;
 
     case "22":
-      if (msg.hasMedia) {
-        const media = await msg.downloadMedia();
-        const extension = mime.extension(media.mimetype);
-        const fileName = media.filename
-          ? media.filename
-          : `media_${Date.now()}.${extension}`;
-
-        // Usando path.resolve para subir um nível
-        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
-
-        fs.writeFile(mediaPath, media.data, "base64", (err) => {
-          if (err) {
-            console.error("Erro ao salvar o arquivo de mídia:", err);
-            client.sendMessage(
-              user,
-              "Não consegui gravar a imagem, tente novamente por favor"
-            );
-          } else {
-            addDataToObject(user, { 22: fileName });
-            console.log("Arquivo de mídia salvo com sucesso:", mediaPath);
-            updateUserData(user, { step: "23" });
-            client.sendMessage(user, "Pronto! Agora envie a segunda imagem:");
-          }
-        });
-      } else {
-        await client.sendMessage(
-          user,
-          "Você não enviou a imagem. Tente novamente"
-        );
-      }
+      addSpecialItemToObject(user, { espec: msg.body });
+      updateUserData(user, { step: "23" });
+      await client.sendMessage(
+        user,
+        "Deseja adicionar um novo item? \n 1 - Sim \n 2 - Não"
+      );
       break;
 
     case "23":
-      if (msg.hasMedia) {
-        const media = await msg.downloadMedia();
-        const extension = mime.extension(media.mimetype);
-        const fileName = media.filename
-          ? media.filename
-          : `media_${Date.now()}.${extension}`;
-
-        // Usando path.resolve para subir um nível
-        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
-
-        fs.writeFile(mediaPath, media.data, "base64", (err) => {
-          if (err) {
-            console.error("Erro ao salvar o arquivo de mídia:", err);
-            client.sendMessage(
-              user,
-              "Não consegui gravar a segunda imagem, tente novamente por favor"
-            );
-          } else {
-            addDataToObject(user, { 23: fileName });
-            console.log("Foto local QGBT 2 salva com sucesso:", mediaPath);
-            updateUserData(user, { step: "24" });
-            client.sendMessage(
-              user,
-              "Agora envie as fotos do trajeto de infra e passagens de cabo. São *4* imagens. Envie a primeira"
-            );
-          }
-        });
-      } else {
+      if (msg.body === "1") {
+        updateUserData(user, { step: "21" });
+        transferSpecialItemsToItems(user);
+        await client.sendMessage(user, `Qual o item especial?`);
+        break;
+      } else if (msg.body === "2") {
+        transferSpecialItemsToItems(user);
+        updateUserData(user, { step: "24" }); //preciso acertar esse numero depois
         await client.sendMessage(
           user,
-          "Você não enviou a segunda imagem. Tente novamente"
+          `Agora vamos anexar as imagens ao nosso relatório`
         );
+        await client.sendMessage(
+          user,
+          `Começando pelas fotos do QGBT do cliente. Serão *2* imagens, envie a primeira.`
+        );
+        break;
+      } else {
+        await client.sendMessage(user, `Não entendi, tente novamente!`);
       }
-      break;
 
     case "24":
       if (msg.hasMedia) {
@@ -373,13 +292,10 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a imagem anterior, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 24: fileName });
-            console.log(
-              "Primeira imagem trajeto salva com sucesso:",
-              mediaPath
-            );
+            addDataToObject(user, { 20: fileName });
+            console.log("Arquivo de mídia salvo com sucesso:", mediaPath);
             updateUserData(user, { step: "25" });
-            client.sendMessage(user, "Hora da segunda foto");
+            client.sendMessage(user, "Pronto! Agora envie a segunda imagem:");
           }
         });
       } else {
@@ -409,13 +325,13 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a segunda imagem, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 25: fileName });
-            console.log(
-              "Segunda imagem trajeto salva com sucesso::",
-              mediaPath
-            );
+            addDataToObject(user, { 21: fileName });
+            console.log("Arquivo de mídia salvo com sucesso:", mediaPath);
             updateUserData(user, { step: "26" });
-            client.sendMessage(user, "Agora a 3ª foto");
+            client.sendMessage(
+              user,
+              "Agora envie as imagens do local destinado ao QGBT. São *2* fotos, envie a primeira."
+            );
           }
         });
       } else {
@@ -442,22 +358,19 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
             console.error("Erro ao salvar o arquivo de mídia:", err);
             client.sendMessage(
               user,
-              "Não consegui gravar a terceira imagem, tente novamente por favor"
+              "Não consegui gravar a imagem, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 26: fileName });
-            console.log(
-              "Terceira imagem trajeto salva com sucesso:",
-              mediaPath
-            );
+            addDataToObject(user, { 22: fileName });
+            console.log("Arquivo de mídia salvo com sucesso:", mediaPath);
             updateUserData(user, { step: "27" });
-            client.sendMessage(user, "Certo! Envie a ultima imagem:");
+            client.sendMessage(user, "Pronto! Agora envie a segunda imagem:");
           }
         });
       } else {
         await client.sendMessage(
           user,
-          "Você não enviou a terceira imagem. Tente novamente"
+          "Você não enviou a imagem. Tente novamente"
         );
       }
       break;
@@ -478,22 +391,22 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
             console.error("Erro ao salvar o arquivo de mídia:", err);
             client.sendMessage(
               user,
-              "Não consegui gravar a imagem anterior, tente novamente por favor"
+              "Não consegui gravar a segunda imagem, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 27: fileName });
-            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            addDataToObject(user, { 23: fileName });
+            console.log("Foto local QGBT 2 salva com sucesso:", mediaPath);
             updateUserData(user, { step: "28" });
             client.sendMessage(
               user,
-              "Agora são as fotos do local destinado ao gerador. São *3* imagens. Envie a primeira"
+              "Agora envie as fotos do trajeto de infra e passagens de cabo. São *4* imagens. Envie a primeira"
             );
           }
         });
       } else {
         await client.sendMessage(
           user,
-          "Você não enviou a quarta imagem. Tente novamente"
+          "Você não enviou a segunda imagem. Tente novamente"
         );
       }
       break;
@@ -517,10 +430,13 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a imagem anterior, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 28: fileName });
-            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            addDataToObject(user, { 24: fileName });
+            console.log(
+              "Primeira imagem trajeto salva com sucesso:",
+              mediaPath
+            );
             updateUserData(user, { step: "29" });
-            client.sendMessage(user, "Envie a segunda imagem");
+            client.sendMessage(user, "Hora da segunda foto");
           }
         });
       } else {
@@ -547,13 +463,16 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
             console.error("Erro ao salvar o arquivo de mídia:", err);
             client.sendMessage(
               user,
-              "Não consegui gravar a imagem anterior, tente novamente por favor"
+              "Não consegui gravar a segunda imagem, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 29: fileName });
-            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            addDataToObject(user, { 25: fileName });
+            console.log(
+              "Segunda imagem trajeto salva com sucesso::",
+              mediaPath
+            );
             updateUserData(user, { step: "30" });
-            client.sendMessage(user, "Envie a última imagem");
+            client.sendMessage(user, "Agora a 3ª foto");
           }
         });
       } else {
@@ -580,16 +499,16 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
             console.error("Erro ao salvar o arquivo de mídia:", err);
             client.sendMessage(
               user,
-              "Não consegui gravar a imagem anterior, tente novamente por favor"
+              "Não consegui gravar a terceira imagem, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 30: fileName });
-            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
-            updateUserData(user, { step: "31" });
-            client.sendMessage(
-              user,
-              "Agora fotos do trajeto para exaustão (Escapamento). São *2* imagens. Envie a primeira"
+            addDataToObject(user, { 26: fileName });
+            console.log(
+              "Terceira imagem trajeto salva com sucesso:",
+              mediaPath
             );
+            updateUserData(user, { step: "31" });
+            client.sendMessage(user, "Certo! Envie a ultima imagem:");
           }
         });
       } else {
@@ -619,19 +538,19 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a imagem anterior, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 31: fileName });
+            addDataToObject(user, { 27: fileName });
             console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
             updateUserData(user, { step: "32" });
             client.sendMessage(
               user,
-              "Agora a segunda e última foto do escapamento."
+              "Agora são as fotos do local destinado ao gerador. São *3* imagens. Envie a primeira"
             );
           }
         });
       } else {
         await client.sendMessage(
           user,
-          "Você não enviou a terceira imagem. Tente novamente"
+          "Você não enviou a quarta imagem. Tente novamente"
         );
       }
       break;
@@ -655,19 +574,16 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a imagem anterior, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 32: fileName });
+            addDataToObject(user, { 28: fileName });
             console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
             updateUserData(user, { step: "33" });
-            client.sendMessage(
-              user,
-              "Agora é possivel enviar imagens de informações adicionais.\n Você pode enviar até *3*.\n Caso não queira enviar essas imagens, basta digitar *Seguir*."
-            );
+            client.sendMessage(user, "Envie a segunda imagem");
           }
         });
       } else {
         await client.sendMessage(
           user,
-          "Você não enviou a terceira imagem. Tente novamente"
+          "Você não enviou a imagem. Tente novamente"
         );
       }
       break;
@@ -691,19 +607,19 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a imagem anterior, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 33: fileName });
+            addDataToObject(user, { 29: fileName });
             console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
             updateUserData(user, { step: "34" });
-            /*  client.sendMessage(user, "Agora é possivel enviar mais *3* imagens de informações adicionais. Caso não queira enviar essas imagens, basta digitar *Seguir*."); */
+            client.sendMessage(user, "Envie a última imagem");
           }
         });
-        break;
       } else {
-        /* await client.sendMessage(
+        await client.sendMessage(
           user,
-          "Você não enviou a terceira imagem. Tente novamente"
-        ); */
+          "Você não enviou a segunda imagem. Tente novamente"
+        );
       }
+      break;
 
     case "34":
       if (msg.hasMedia) {
@@ -724,9 +640,117 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               "Não consegui gravar a imagem anterior, tente novamente por favor"
             );
           } else {
-            addDataToObject(user, { 34: fileName });
+            addDataToObject(user, { 30: fileName });
             console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
             updateUserData(user, { step: "35" });
+            client.sendMessage(
+              user,
+              "Agora fotos do trajeto para exaustão (Escapamento). São *2* imagens. Envie a primeira"
+            );
+          }
+        });
+      } else {
+        await client.sendMessage(
+          user,
+          "Você não enviou a terceira imagem. Tente novamente"
+        );
+      }
+      break;
+
+    case "35":
+      if (msg.hasMedia) {
+        const media = await msg.downloadMedia();
+        const extension = mime.extension(media.mimetype);
+        const fileName = media.filename
+          ? media.filename
+          : `media_${Date.now()}.${extension}`;
+
+        // Usando path.resolve para subir um nível
+        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
+
+        fs.writeFile(mediaPath, media.data, "base64", (err) => {
+          if (err) {
+            console.error("Erro ao salvar o arquivo de mídia:", err);
+            client.sendMessage(
+              user,
+              "Não consegui gravar a imagem anterior, tente novamente por favor"
+            );
+          } else {
+            addDataToObject(user, { 31: fileName });
+            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            updateUserData(user, { step: "36" });
+            client.sendMessage(
+              user,
+              "Agora a segunda e última foto do escapamento."
+            );
+          }
+        });
+      } else {
+        await client.sendMessage(
+          user,
+          "Você não enviou a terceira imagem. Tente novamente"
+        );
+      }
+      break;
+
+    case "36":
+      if (msg.hasMedia) {
+        const media = await msg.downloadMedia();
+        const extension = mime.extension(media.mimetype);
+        const fileName = media.filename
+          ? media.filename
+          : `media_${Date.now()}.${extension}`;
+
+        // Usando path.resolve para subir um nível
+        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
+
+        fs.writeFile(mediaPath, media.data, "base64", (err) => {
+          if (err) {
+            console.error("Erro ao salvar o arquivo de mídia:", err);
+            client.sendMessage(
+              user,
+              "Não consegui gravar a imagem anterior, tente novamente por favor"
+            );
+          } else {
+            addDataToObject(user, { 32: fileName });
+            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            updateUserData(user, { step: "37" });
+            client.sendMessage(
+              user,
+              "Agora é possivel enviar imagens de informações adicionais.\n Você pode enviar até *3*.\n Caso não queira enviar essas imagens, basta digitar *Seguir*."
+            );
+          }
+        });
+      } else {
+        await client.sendMessage(
+          user,
+          "Você não enviou a terceira imagem. Tente novamente"
+        );
+      }
+      break;
+
+    case "37":
+      if (msg.hasMedia) {
+        const media = await msg.downloadMedia();
+        const extension = mime.extension(media.mimetype);
+        const fileName = media.filename
+          ? media.filename
+          : `media_${Date.now()}.${extension}`;
+
+        // Usando path.resolve para subir um nível
+        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
+
+        fs.writeFile(mediaPath, media.data, "base64", (err) => {
+          if (err) {
+            console.error("Erro ao salvar o arquivo de mídia:", err);
+            client.sendMessage(
+              user,
+              "Não consegui gravar a imagem anterior, tente novamente por favor"
+            );
+          } else {
+            addDataToObject(user, { 33: fileName });
+            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            updateUserData(user, { step: "38" });
             /*  client.sendMessage(user, "Agora é possivel enviar mais *3* imagens de informações adicionais. Caso não queira enviar essas imagens, basta digitar *Seguir*."); */
           }
         });
@@ -738,7 +762,40 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         ); */
       }
 
-    case "35":
+    case "38":
+      if (msg.hasMedia) {
+        const media = await msg.downloadMedia();
+        const extension = mime.extension(media.mimetype);
+        const fileName = media.filename
+          ? media.filename
+          : `media_${Date.now()}.${extension}`;
+
+        // Usando path.resolve para subir um nível
+        const mediaPath = path.resolve(__dirname, "..", "medias", fileName);
+
+        fs.writeFile(mediaPath, media.data, "base64", (err) => {
+          if (err) {
+            console.error("Erro ao salvar o arquivo de mídia:", err);
+            client.sendMessage(
+              user,
+              "Não consegui gravar a imagem anterior, tente novamente por favor"
+            );
+          } else {
+            addDataToObject(user, { 34: fileName });
+            console.log("Quarta imagem trajeto salva com sucesso:", mediaPath);
+            updateUserData(user, { step: "39" });
+            /*  client.sendMessage(user, "Agora é possivel enviar mais *3* imagens de informações adicionais. Caso não queira enviar essas imagens, basta digitar *Seguir*."); */
+          }
+        });
+        break;
+      } else {
+        /* await client.sendMessage(
+          user,
+          "Você não enviou a terceira imagem. Tente novamente"
+        ); */
+      }
+
+    case "39":
       if (msg.hasMedia) {
         const media = await msg.downloadMedia();
         const extension = mime.extension(media.mimetype);
@@ -771,7 +828,24 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         ); */
       }
 
-      updateUserData(user, { step: "36" });
+      let medicoes = "";
+      estadoConversa.equips.forEach((equip) => {
+        medicoes += `
+      Tipo: *${equip.type}*
+      Pico: *${equip.pico}*
+      Operação: *${equip.operacao}*
+  `;
+      });
+
+      let itensEspeciais = "";
+      estadoConversa.items.forEach((item) => {
+        itensEspeciais += `
+      Item: *${item.tipo}*
+      Especificação: *${item.espec}*
+  `;
+      });
+
+      updateUserData(user, { step: "40" });
       await client.sendMessage(
         user,
         `
@@ -779,21 +853,19 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               Endereço: *${estadoConversa.data[2]}*
               Quem Acompanhou: *${estadoConversa.data[3]}*
               Tipo de Cliente: *${estadoConversa.data[4]}*
-
-              Estrura:  
+      
+              Estrutura:  
               Apartamentos/Salas: *${estadoConversa.data[5]}m*
               Elevadores: *${estadoConversa.data[6]}m*
               Torres: *${estadoConversa.data[7]}m*
-
+      
               Medições:
-              QGBT: *${estadoConversa.data[8]}*
-              Elevador de Serviço (Pico): *${estadoConversa.data[9]}*
-              Elevador de Serviço (Operação): *${estadoConversa.data[10]}*
-              Elevador Social (Pico): *${estadoConversa.data[11]}*
-              Elevador Social (Operação): *${estadoConversa.data[12]}*
+              ${medicoes}
              
-              Bombas: *${estadoConversa.data[13]}*
-
+      
+              Itens Especiais:
+              ${itensEspeciais}
+      
               Tensões de Fases:
               RN: *${estadoConversa.data[14]}*
               SN: *${estadoConversa.data[15]}*
@@ -801,13 +873,12 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
               RS: *${estadoConversa.data[17]}*
               ST: *${estadoConversa.data[18]}*
               TR: *${estadoConversa.data[19]}*
-             
-              `
+            `
       );
       client.sendMessage(user, `Vamos enviar as informações?`);
       break;
 
-    case "36":
+    case "40":
       await client.sendMessage(user, "Finalizando e enviando..");
 
       // Criando a visita no banco de dados
@@ -846,46 +917,54 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         });
       }
 
-          // Exemplo de uso
-     await  generatePDF.generatePDF(
-      "medias/output.pdf",
-      "Julio Ramos", // Consultor
-      estadoConversa.data[1], // Cliente
-      estadoConversa.data[2], // Endereço
-      estadoConversa.data[3], // Contato
-      estadoConversa.data[4], // Tipo de Cliente
-      estadoConversa.data[5], //quantidade salas|apartamentos
-      estadoConversa.data[6], //quantidade Torres
-      estadoConversa.data[7], //quantidade bombas
-      estadoConversa.equips, //equipamentos
-      estadoConversa.data[14],//RN
-      estadoConversa.data[15],//SN
-      estadoConversa.data[16],//TN
-      estadoConversa.data[17],//RS
-      estadoConversa.data[18],//ST
-      estadoConversa.data[19],//TR
-      [
-        estadoConversa.data[20],
-        estadoConversa.data[21],
-        estadoConversa.data[22],
-        estadoConversa.data[23],
-        estadoConversa.data[24],
-        estadoConversa.data[25],
-        estadoConversa.data[26],
-        estadoConversa.data[27],
-        estadoConversa.data[28],
-        estadoConversa.data[29],
-        estadoConversa.data[30],
-        estadoConversa.data[31],
-        estadoConversa.data[32],
-      ] // Caminhos para as 16 imagens
-    );
+      for (const specialItem of estadoConversa.items) {
+        await commercialVisitsSpecialItems.create({
+          visitId: vrId,
+          type: specialItem.tipo,
+          espec: specialItem.espec,
+        });
+      }
 
-    await sendMailVisitasTecnicas.sendMailVisitaTecnica(estadoConversa, vrId);
+      // Exemplo de uso
+      await generatePDF.generatePDF(
+        "medias/output.pdf",
+        estadoConversa.user, // Consultor
+        estadoConversa.data[1], // Cliente
+        estadoConversa.data[2], // Endereço
+        estadoConversa.data[3], // Contato
+        estadoConversa.data[4], // Tipo de Cliente
+        estadoConversa.data[5], //quantidade salas|apartamentos
+        estadoConversa.data[6], //quantidade Torres
+        estadoConversa.data[7], //quantidade bombas
+        estadoConversa.items, //itens especiais
+        estadoConversa.equips, //equipamentos
+        estadoConversa.data[14], //RN
+        estadoConversa.data[15], //SN
+        estadoConversa.data[16], //TN
+        estadoConversa.data[17], //RS
+        estadoConversa.data[18], //ST
+        estadoConversa.data[19], //TR
+        [
+          estadoConversa.data[20],
+          estadoConversa.data[21],
+          estadoConversa.data[22],
+          estadoConversa.data[23],
+          estadoConversa.data[24],
+          estadoConversa.data[25],
+          estadoConversa.data[26],
+          estadoConversa.data[27],
+          estadoConversa.data[28],
+          estadoConversa.data[29],
+          estadoConversa.data[30],
+          estadoConversa.data[31],
+          estadoConversa.data[32],
+        ] // Caminhos para as 16 imagens
+      );
 
+      await sendMailVisitasTecnicas.sendMailVisitaTecnica(estadoConversa, vrId);
 
       const apiUrl =
-        "http://localhost/painelessencial/public/comercial/visitastecnicas/baixar/fotos";
+        "https://testepainel.essencialenergia.com.br/comercial/visitastecnicas/baixar/fotos";
 
       // Chamada para a API
       const response = await fetch(apiUrl, {
@@ -896,7 +975,7 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         },
       });
 
-   /*    // Iterando sobre as fotos para excluir cada uma
+      /*    // Iterando sobre as fotos para excluir cada uma
       for (const value of Object.values(estadoConversa.data)) {
         const filePath = path.join(__dirname, "..", "medias", value);
 
@@ -910,7 +989,6 @@ async function visitaTecnica(client, msg, estadoConversa, user) {
         });
       } */
 
-  
       await client.sendMessage(
         user,
         `Pronto! A solicitação ${vrId} foi enviada`
